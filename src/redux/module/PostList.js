@@ -24,10 +24,9 @@ export const api = {
   getPost: () => {
     return async () => {
       try {
-        // const res = await fetch('http://jsonplaceholder.typicode.com/posts');
-        const res = await fetch('http://facebook.github.io/react-native/movies.json');
+        const res = await fetch('http://jsonplaceholder.typicode.com/posts');
         const json = await res.json();
-        return [{id: 1}];
+        return json;
       } catch(error) {
         console.error(error);
       }

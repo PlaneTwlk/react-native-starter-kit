@@ -1,36 +1,39 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native'
+import { Button, Container, Content, Header, Icon, Spinner, Title } from 'native-base';
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import PostList from '../components/PostList';
 import { fetchPost } from '../redux/module/PostList';
 
 class Dashboard extends Component {
-  componentDidMount() {
-    console.log(this.props);
+  componentWillMount() {
     const { dispatch } = this.props;
     dispatch(fetchPost());
   }
   render() {
+    let rows = this.props.PostList;
     return (
-      <View style={styles.container}>
-        <Ionicons.ToolbarAndroid
-          style={ styles.title }
-          title='Dashboard'
-          titleColor='#FFF'
-          actions={ [{title: 'add', iconName: 'md-create', show: 'always'}] }
-          onActionSelected={ this._onActionSelected.bind(this) }
-        />
-      </View>
+      <Container>
+        <Header foregroundColor='#FFF'>
+          <Title>Dashboard</Title>
+          <Button transparent iconRigh onPress={this._actionCreatePost.bind(this)}>
+            <Icon name="md-create" />
+          </Button>
+        </Header>
+        <Content>
+          {
+            (rows.length) ? <PostList rows={ rows } /> : <Spinner color='#039BE5'/>
+          }
+        </Content>
+      </Container>
     );
   }
-  _onActionSelected(position) {
+  _actionCreatePost() {
     const { navigator } = this.props;
-    if (position === 0) {
-      navigator.push({
-        id: 'Post'
-      });
-    }
+    navigator.push({
+      id: 'Post'
+    });
   }
 
   static propTypes = {
