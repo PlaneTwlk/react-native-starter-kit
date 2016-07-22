@@ -19,16 +19,16 @@ export default class Post extends Component {
 
   render() {
     const toolbarActions = [
-      {title: 'post', iconName: 'md-checkmark', show: 'always'}
+      {title: 'post', iconName: 'md-add', show: 'always'}
     ];
 
     return (
-      <View>
+      <View style={ styles.container }>
         <Ionicons.ToolbarAndroid
-          style={styles.toolbar}
+          style={ styles.toolbar }
           title='Post'
           titleColor='#FFF'
-          navIconName='md-close'
+          navIconName='md-arrow-round-back'
           onIconClicked={this.onIconClicked.bind(this)}
           actions={toolbarActions}
           // onActionSelected={this.onActionSelected.bind(this)}
@@ -39,6 +39,9 @@ export default class Post extends Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
   toolbar: {
     height: 56,
     backgroundColor: '#FF6600'
@@ -47,9 +50,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
-  },
-  titleText: {
-    color: '#FFF',
-    fontSize: 16,
   }
 });
