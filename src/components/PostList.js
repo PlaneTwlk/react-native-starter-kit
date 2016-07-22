@@ -1,8 +1,20 @@
 import React, { Component } from 'react';
-import { Content, List, ListItem, Text } from 'native-base';
+import { List, ListItem, Text } from 'native-base';
 import _ from 'lodash';
 
+// import { fetchPost } from '../redux/module/PostList';
+
 export default class PostList extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { refreshing: false };
+  }
+  _onRefresh() {
+    //const { dispatch } = this.props;
+    //this.setState({refreshing: true});
+
+  }
+
   render() {
     const { rows } = this.props;
     return (

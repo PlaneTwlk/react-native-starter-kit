@@ -1,9 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View } from 'react-native'
-import { Button, Container, Content, Header, Icon, Spinner, Title } from 'native-base';
+import { Button, Container, Content, Header, Icon, Title } from 'native-base';
 
 import PostList from '../components/PostList';
+import Loading from '../components/Loading';
 import { fetchPost } from '../redux/module/PostList';
 
 class Dashboard extends Component {
@@ -23,7 +24,7 @@ class Dashboard extends Component {
         </Header>
         <Content>
           {
-            (rows.length) ? <PostList rows={ rows } /> : <Spinner color='#039BE5'/>
+            (rows.length) ? <PostList rows={ rows } /> : <Loading />
           }
         </Content>
       </Container>
@@ -40,16 +41,6 @@ class Dashboard extends Component {
     PostList: PropTypes.array.isRequired
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  title: {
-    backgroundColor: '#FF6600',
-    height: 56
-  }
-});
 
 export const mapStateToProps = state => { return { PostList: state.PostList } };
 
