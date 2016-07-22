@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View } from 'react-native'
 import { Button, Container, Content, Header, Icon, Title } from 'native-base';
 
 import PostList from '../components/PostList';

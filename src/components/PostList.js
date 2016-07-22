@@ -9,11 +9,6 @@ export default class PostList extends Component {
     super(props);
     this.state = { refreshing: false };
   }
-  _onRefresh() {
-    //const { dispatch } = this.props;
-    //this.setState({refreshing: true});
-
-  }
 
   render() {
     const { rows } = this.props;
