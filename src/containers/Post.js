@@ -13,8 +13,6 @@ import {
   View
 } from 'native-base';
 
-import _ from 'lodash';
-
 import FormInput from '../components/FormInput';
 import { DatePicker, TimePicker } from '../components/DateTimePicker';
 
@@ -37,7 +35,9 @@ class Post extends Component {
   }
 
   render() {
-    const {disabledPost, formValue } = this.state;
+    const { disabledPost } = this.state;
+    const { date, hour, minute } = this.state.formValue;
+    console.log(this.state);
     return (
       <Container>
         <Header foregroundColor='#FFF'>
@@ -65,6 +65,7 @@ class Post extends Component {
               <Icon name='md-calendar' style={ styles.pickerIcon }/>
               <DatePicker
                 pickerStyle={ pickerStyle }
+                date={ date }
                 onSelect={ this._onSelectDate.bind(this) }
               />
             </View>
@@ -74,6 +75,8 @@ class Post extends Component {
               <Icon name='md-time' style={ styles.pickerIcon }/>
               <TimePicker
                 pickerStyle={ pickerStyle }
+                hour={ hour }
+                minute={ minute }
                 onSelect={ this._onSelectTime.bind(this)}
               />
             </View>
@@ -100,7 +103,6 @@ class Post extends Component {
 
   _actionAddPost() {
     const { dispatch } = this.props;
-    console.log(fetch);
   }
 
   _onChangeText(text, item) {
@@ -119,13 +121,26 @@ class Post extends Component {
   }
 
   _onSelectDate = date => {
-    this.setState({ date: date });
+    let { formValue } = this.state;
+    let newState;
+
+    formValue.date = date;
+    newState = {
+      disabledPost: this.state.disabledPost,
+      formValue: formValue
+    }
+    this.setState(newState) ;
   }
 
   _onSelectTime = (hour, minute) => {
-    let newState = {
-      hour: hour,
-      minute: minute
+    let { formValue } = this.state;
+    let newState;
+
+    formValue.hour = hour;
+    formValue.minute = minute;
+    newState = {
+      disabledPost: this.state.disabledPost,
+      formValue: formValue
     }
     this.setState(newState);
   }

@@ -8,37 +8,30 @@ import {
 
 import { Content, Icon, Text } from 'native-base';
 
-const date = new Date();
-
 export class DatePicker extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      date: date
-    };
   }
 
   async _showDatePicker(options) {
     try {
       const { onSelect } = this.props;
-      let newState = {};
       const { action, year, month, day } = await DatePickerAndroid.open(options);
+      let date;
       if (action !== DatePickerAndroid.dismissedAction) {
-        newState.date = new Date(year, month, day);
+        date = new Date(year, month, day);
+        onSelect(date);
       }
-      this.setState(newState);
-      onSelect(newState.date);
     } catch ({code, message}) {
       console.warn('Error : ', message);
     }
   }
 
   render() {
-    const { date } = this.state;
-    const { pickerStyle } = this.props;
+    const { date, pickerStyle } = this.props;
     return (
       <TouchableOpacity
-        onPress={this._showDatePicker.bind(this, { date: this.state.date })}
+        onPress={this._showDatePicker.bind(this, { date: date })}
         style={ pickerStyle }
       >
         <Text>
@@ -49,7 +42,8 @@ export class DatePicker extends Component {
   }
 
   static propTypes = {
-    onSelect: PropTypes.func.isRequired
+    onSelect: PropTypes.func.isRequired,
+    date: PropTypes.object.isRequired
   }
 }
 
@@ -57,10 +51,6 @@ export class DatePicker extends Component {
 export class TimePicker extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      hour: date.getHours(),
-      minute: date.getMinutes()
-    };
   }
 
   _formatTime(hour, minute) {
@@ -73,21 +63,15 @@ export class TimePicker extends Component {
       let newState = {};
       const { action, minute, hour } = await TimePickerAndroid.open(options);
       if (action !== TimePickerAndroid.dismissedAction) {
-        newState = {
-          hour: hour,
-          minute: minute
-        };
+        onSelect(hour, minute);
       }
-      this.setState(newState);
-      onSelect(hour, minute);
     } catch ({code, message}) {
       console.warn('Error : ', message);
     }
   }
 
   render() {
-    const { hour, minute } = this.state;
-    const { pickerStyle } = this.props;
+    const { hour, minute, pickerStyle } = this.props;
     return (
       <TouchableOpacity
         onPress={this._showTimePicker.bind(this, { hour: hour, minute: minute  })}
@@ -101,7 +85,9 @@ export class TimePicker extends Component {
   }
 
   static propTypes = {
-    onSelect: PropTypes.func.isRequired
+    onSelect: PropTypes.func.isRequired,
+    hour: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    minute: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired
   }
 }
 
