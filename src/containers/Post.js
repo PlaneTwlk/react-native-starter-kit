@@ -12,6 +12,7 @@ import {
   Title,
   View
 } from 'native-base';
+import _ from 'lodash';
 
 import FormInput from '../components/FormInput';
 import { DatePicker, TimePicker } from '../components/DateTimePicker';
@@ -23,20 +24,17 @@ class Post extends Component {
     super(props);
     this.state = {
       disabledPost: true,
-      formValue: {
-        name: '',
-        date: date,
-        hour: date.getHours(),
-        minute: date.getMinutes(),
-        title: '',
-        content: ''
-      }
+      name: '',
+      date: date,
+      hour: date.getHours(),
+      minute: date.getMinutes(),
+      title: '',
+      content: ''
     };
   }
 
   render() {
-    const { disabledPost } = this.state;
-    const { date, hour, minute } = this.state.formValue;
+    const { date, disabledPost, hour, minute } = this.state;
     console.log(this.state);
     return (
       <Container>
@@ -106,42 +104,32 @@ class Post extends Component {
   }
 
   _onChangeText(text, item) {
-    let { formValue } = this.state;
+    let keyAry = [ 'name', 'title', 'content' ];
+    const { name, title, content } = this.state;
     let newState = {};
 
-    formValue[item] = text;
-    if ( formValue.name === '' || formValue.title === '' || formValue.content === '' ) {
+    _.map(keyAry, item => {
+      newState[item] = this.state[item];
+    });
+
+    newState[item] = text;
+    if ( newState.name === '' || newState.title === '' || newState.content === '' ) {
       newState.disabledPost = true;
     } else {
       newState.disabledPost = false;
     }
-    newState.formValue = formValue;
-
     this.setState(newState);
   }
 
   _onSelectDate = date => {
-    let { formValue } = this.state;
-    let newState;
-
-    formValue.date = date;
-    newState = {
-      disabledPost: this.state.disabledPost,
-      formValue: formValue
-    }
-    this.setState(newState) ;
+    this.setState({date: date}) ;
   }
 
   _onSelectTime = (hour, minute) => {
-    let { formValue } = this.state;
-    let newState;
-
-    formValue.hour = hour;
-    formValue.minute = minute;
-    newState = {
-      disabledPost: this.state.disabledPost,
-      formValue: formValue
-    }
+    let newState = {
+      hour: hour,
+      minute: minute
+    };
     this.setState(newState);
   }
 

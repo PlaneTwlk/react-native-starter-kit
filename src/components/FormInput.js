@@ -12,7 +12,7 @@ const FormInput = (props) => {
         <Icon name={ icon } />
         <Input
           placeholder={ placeholder }
-          onChangeText={ (text) => { changeText(text, 'name')} }
+          onChangeText={ (text) => { onChangeText(text, placeholder.toLowerCase())} }
         />
       </InputGroup>
     </ListItem>
