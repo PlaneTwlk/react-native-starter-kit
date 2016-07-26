@@ -1,29 +1,27 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { refreshControl } from 'react-native';
 import { List, ListItem, Text } from 'native-base';
 import _ from 'lodash';
 
-// import { fetchPost } from '../redux/module/PostList';
+const PostList = (props) => {
+  const { rows, refreshControl } = props;
+  return (
+    <List>
+      {
+        _.map(rows, item=> {
+          return(
+            <ListItem key={item.id}>
+              <Text>{item.title}</Text>
+            </ListItem>
+          );
+        })
+      }
+    </List>
+  );
+};
 
-export default class PostList extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { refreshing: false };
-  }
+PostList.props = {
+  rows: PropTypes.object.isRequired
+};
 
-  render() {
-    const { rows } = this.props;
-    return (
-      <List>
-        {
-          _.map(rows, item=> {
-            return(
-              <ListItem key={item.id}>
-                <Text>{item.title}</Text>
-              </ListItem>
-            );
-          })
-        }
-      </List>
-    );
-  }
-}
+export default PostList;

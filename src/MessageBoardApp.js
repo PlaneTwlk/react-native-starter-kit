@@ -12,12 +12,12 @@ export default class MessageBoardApp extends Component {
     return (
       <Navigator
         initialRoute={ {id: 'Dashboard'} }
-        renderScene={ this.renderScene.bind(this) }
+        renderScene={ this._renderScene.bind(this) }
       />
     )
   }
 
-  renderScene(route, navigator) {
+  _renderScene(route, navigator) {
     const { dispatch } = this.props;
     switch (route.id) {
       case 'Dashboard':
@@ -29,7 +29,10 @@ export default class MessageBoardApp extends Component {
         );
       case 'Post':
         return (
-          <Post navigator={navigator}/>
+          <Post
+            dispatch={ dispatch }
+            navigator={ navigator }
+          />
         );
     }
   }

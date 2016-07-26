@@ -1,34 +1,46 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { Button, Container, Content, Header, Icon, Title } from 'native-base';
+import { Dimensions, ScrollView, RefreshControl, View } from 'react-native';
+import { Button, Header, Icon, Title } from 'native-base';
 
+import Toolbar from '../components/Toolbar';
 import PostList from '../components/PostList';
-import Loading from '../components/Loading';
 import { fetchPost } from '../redux/module/PostList';
 
+const { height } = Dimensions.get('window');
+const toolbarHeight = 56;
+const contentHeight = height - 56;
+
 class Dashboard extends Component {
-  componentWillMount() {
+  constructor(props) {
+    super(props);
     const { dispatch } = this.props;
     dispatch(fetchPost());
   }
+
   render() {
-    let rows = this.props.PostList;
+    const rows = this.props.PostList.data;
+    const { isRefreshing } =  this.props.PostList;
     return (
-      <Container>
-        <Header foregroundColor='#FFF'>
-          <Title>Dashboard</Title>
-          <Button transparent iconRigh onPress={this._actionCreatePost.bind(this)}>
-            <Icon name="md-create" />
-          </Button>
-        </Header>
-        <Content>
-          {
-            (rows.length) ? <PostList rows={ rows } /> : <Loading />
+      <View>
+        <View style={ { height: toolbarHeight } }>
+          <Toolbar onActionPress={ this._actionCreatePost.bind(this) }/>
+        </View>
+        <ScrollView
+          style={ {height: contentHeight} }
+          refreshControl={
+            <RefreshControl
+              refreshing={ isRefreshing }
+              onRefresh={ this._onRefresh.bind(this) }
+            />
           }
-        </Content>
-      </Container>
+        >
+          <PostList rows={ rows } />
+        </ScrollView>
+      </View>
     );
   }
+
   _actionCreatePost() {
     const { navigator } = this.props;
     navigator.push({
@@ -36,8 +48,13 @@ class Dashboard extends Component {
     });
   }
 
+  _onRefresh() {
+    const { dispatch } = this.props;
+    dispatch(fetchPost());
+  }
+
   static propTypes = {
-    PostList: PropTypes.array.isRequired
+    PostList: PropTypes.object.isRequired
   }
 }
 
