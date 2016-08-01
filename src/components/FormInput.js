@@ -4,25 +4,28 @@ import { Icon, Input, InputGroup, List, ListItem , View} from 'native-base';
 
 import { DatePicker, TimePicker } from './DateTimePicker';
 
-const FormInput = (props) => {
-  const { onChangeText, icon, placeholder } = props;
-  return (
-    <ListItem>
-      <InputGroup>
-        <Icon name={ icon } />
-        <Input
-          placeholder={ placeholder }
-          onChangeText={ (text) => { onChangeText(text, placeholder.toLowerCase())} }
-        />
-      </InputGroup>
-    </ListItem>
-  );
+export default class FormInput extends Component {
+  render() {
+    const { icon, onChangeText, placeholder, placeholerStyle } = this.props;
+    let refName = placeholder.toLowerCase();
+    return (
+      <ListItem>
+        <InputGroup>
+          <Icon name={ icon } />
+          <Input
+            placeholder={ placeholder }
+            onChangeText={ text => { onChangeText (text, refName); } }
+            placeholderTextColor={ placeholerStyle }
+          />
+        </InputGroup>
+      </ListItem>
+    );
+  }
+
+  static propTypes = {
+    icon: PropTypes.string.isRequired,
+    onChangeText: PropTypes.func.isRequired,
+    placeholder: PropTypes.string.isRequired,
+    placeholerStyle: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  };
 }
-
-FormInput.props = {
-  onChangeText: PropTypes.func.isRequired,
-  icon: PropTypes.string.isRequired,
-  placeholder: PropTypes.string.isRequired
-};
-
-export default FormInput;

@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-import { StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
+import { StyleSheet } from 'react-native';
 import {
   Button,
   Container,
@@ -16,26 +16,37 @@ import _ from 'lodash';
 
 import FormInput from '../components/FormInput';
 import { DatePicker, TimePicker } from '../components/DateTimePicker';
+import { savePost } from '../redux/module/PostForm';
 
-const date = new Date();
+const stateDate = new Date();
+const stateHour = stateDate.getHours();
+const stateMinute = stateDate.getMinutes();
+const keyAry = ['name', 'title', 'content'];
 
 class Post extends Component {
   constructor(props) {
+    const { dispatch } = props;
     super(props);
     this.state = {
-      disabledPost: true,
-      name: '',
-      date: date,
-      hour: date.getHours(),
-      minute: date.getMinutes(),
-      title: '',
-      content: ''
+      date: stateDate,
+      hour: stateHour,
+      minute: stateMinute,
+      isNull: {
+        name: false,
+        title: false,
+        content: false
+      },
+      formValue: {
+        name: '',
+        dateTime: this._getDataTime(stateDate, stateHour, stateMinute),
+        title: '',
+        content: ''
+      }
     };
   }
 
   render() {
-    const { date, disabledPost, hour, minute } = this.state;
-    console.log(this.state);
+    const { date, hour, minute, isNull } = this.state;
     return (
       <Container>
         <Header foregroundColor='#FFF'>
@@ -48,21 +59,23 @@ class Post extends Component {
           <Title>Post</Title>
           <Button
             transparent
-            onPress={ (!disabledPost) ? this._actionAddPost.bind(this) : null }>
+            onPress={ this._actionAddPost.bind(this) }
+          >
             <Icon name='md-checkmark'/>
           </Button>
         </Header>
         <Content>
           <FormInput
             icon='md-person'
-            placeholder='NAME'
             onChangeText={ this._onChangeText.bind(this) }
+            placeholder='NAME'
+            placeholerStyle={ isNull.name ? 'red' : '' }
           />
           <ListItem style={ {padding: 0} }>
             <View style={ styles.picker }>
               <Icon name='md-calendar' style={ styles.pickerIcon }/>
               <DatePicker
-                pickerStyle={ pickerStyle }
+                pickerStyle={ styles.pickerStyle }
                 date={ date }
                 onSelect={ this._onSelectDate.bind(this) }
               />
@@ -72,7 +85,7 @@ class Post extends Component {
             <View style={ styles.picker }>
               <Icon name='md-time' style={ styles.pickerIcon }/>
               <TimePicker
-                pickerStyle={ pickerStyle }
+                pickerStyle={ styles.pickerStyle }
                 hour={ hour }
                 minute={ minute }
                 onSelect={ this._onSelectTime.bind(this)}
@@ -81,62 +94,97 @@ class Post extends Component {
           </ListItem>
           <FormInput
             icon='md-pricetag'
-            placeholder='TITLE'
             onChangeText={ this._onChangeText.bind(this) }
+            placeholder='TITLE'
+            placeholerStyle={ isNull.title ? 'red' : '' }
           />
           <FormInput
             icon='md-pricetags'
-            placeholder='CONTENT'
             onChangeText={ this._onChangeText.bind(this) }
+            placeholder='CONTENT'
+            placeholerStyle={ isNull.content ? 'red' : '' }
           />
         </Content>
       </Container>
     );
   }
-
   _actionBack() {
     const { navigator } = this.props;
-    navigator.pop();
+    navigator.push({
+      id: 'Dashboard'
+    });
   }
 
   _actionAddPost() {
-    const { dispatch } = this.props;
+    let { formValue, isNull } = this.state;
+    let disabled = false;
+
+    _.map(keyAry, item => {
+      if(formValue[item] === '') {
+        isNull[item] = true;
+        disabled = true;
+      } else {
+        isNull[item] = false;
+      }
+    });
+
+    if (!disabled) {
+      const { dispatch } = this.props;
+      dispatch(savePost(this.state.formValue));
+    } else {
+      this.setState({isNull: isNull});
+    }
   }
 
   _onChangeText(text, item) {
-    let keyAry = [ 'name', 'title', 'content' ];
-    const { name, title, content } = this.state;
-    let newState = {};
-
-    _.map(keyAry, item => {
-      newState[item] = this.state[item];
-    });
-
-    newState[item] = text;
-    if ( newState.name === '' || newState.title === '' || newState.content === '' ) {
-      newState.disabledPost = true;
-    } else {
-      newState.disabledPost = false;
-    }
-    this.setState(newState);
-  }
-
-  _onSelectDate = date => {
-    this.setState({date: date}) ;
-  }
-
-  _onSelectTime = (hour, minute) => {
-    let newState = {
-      hour: hour,
-      minute: minute
+    let { formValue, isNull } = this.state;
+    let flag = false;
+    let newState;
+    formValue[item] = text;
+    isNull[item] = false;
+    newState = {
+      isNull: isNull,
+      formValue: formValue
     };
     this.setState(newState);
   }
 
-  static propTypes = {
-    PostForm: PropTypes.object.isRequired
+  _onSelectDate = date => {
+    const { formValue, hour, minute } = this.state;
+    let newState = {
+      date: date,
+      formValue: formValue
+    };
+    newState.formValue.dateTime = this._getDataTime(date, hour, minute)
+    this.setState(newState);
+  }
+
+  _onSelectTime = (hour, minute) => {
+    const { date, formValue } = this.state;
+    let newState = {
+      hour: hour,
+      minute: minute,
+      formValue: formValue
+    };
+    newState.formValue.dateTime = this._getDataTime(date, hour, minute);
+    this.setState(newState);
+  }
+
+  _getDataTime = (date, hour, minute) => {
+    let dateTime = date.toLocaleDateString();
+    dateTime += ' ' + this._formatTime(hour, minute);
+    return dateTime;
+  }
+
+  _formatTime = (hour, minute) => {
+    return hour + ':' + (minute < 10 ? '0' + minute : minute);
   }
 }
+
+export const mapStateToProps = state => { return { PostForm: state.PostForm } };
+
+export default connect(mapStateToProps)(Post);
+
 
 const styles = StyleSheet.create({
   picker: {
@@ -148,16 +196,11 @@ const styles = StyleSheet.create({
   },
   pickerIcon: {
     paddingRight: 5
+  },
+  pickerStyle: {
+    height: 40,
+    justifyContent: 'center',
+    paddingLeft: 5,
+    paddingRight: 5
   }
 });
-
-const pickerStyle ={
-  height: 40,
-  justifyContent: 'center',
-  paddingLeft: 5,
-  paddingRight: 5
-};
-
-export const mapStateToProps = state => { return { PostForm: state.PostForm } };
-
-export default connect(mapStateToProps)(Post);
