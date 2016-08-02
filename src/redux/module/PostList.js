@@ -33,11 +33,11 @@ export const fetchPost = () => {
   };
 };
 
-export const api = {
+export const listApi = {
   getPost: () => {
     return async () => {
       try {
-        const res = await fetch('http://jsonplaceholder.typicode.com/posts');
+        const res = await fetch('http://192.168.1.102:3000/api/dashboard');
         const json = await res.json();
         return json;
       } catch(error) {
